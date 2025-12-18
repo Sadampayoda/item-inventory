@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('inbounds', function (Blueprint $table) {
             $table->id();
+            $table->string('transaction_number')->unique();
+            $table->date('transaction_date');
+            $table->string('warehouse');
+            $table->string('status');
+            $table->date('expired_date');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
