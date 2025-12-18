@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('image')->nullable();
+            $table->enum('level',['admin','warehouse','manajement_warehouse']);
             $table->rememberToken();
             $table->timestamps();
         });
