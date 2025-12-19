@@ -46,9 +46,21 @@
             @enderror
         </div>
 
-        <x-input-text name="stock_on_hand" type="number" label="Stock On Hand" :value="$isEdit ? $item->stock_on_hand : 0" />
+        <x-input-text
+            name="stock_on_hand"
+            type="number"
+            label="Stock On Hand"
+            :value="$isEdit ? $item->stock_on_hand : 0"
+            {{ $isEdit ? 'readonly' : '' }}
+        />
 
-        <x-input-text name="stock_avalaible" type="number" label="Stock Available" :value="$isEdit ? $item->stock_avalaible : 0" />
+        <x-input-text
+            name="stock_avalaible"
+            type="number"
+            label="Stock Available"
+            :value="$isEdit ? $item->stock_avalaible : 0"
+            readonly
+        />
 
         <x-input-text name="min_stock" type="number" label="Minimum Stock" :value="$isEdit ? $item->min_stock : 0" />
 

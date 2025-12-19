@@ -27,8 +27,8 @@ class CreateItemRequest extends FormRequest
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'description' => 'nullable|string',
             'warehouse' => 'required|string',
-            'stock_on_hand' => 'required|integer|min:0',
-            'stock_avalaible' => 'required|integer|min:0',
+            'stock_on_hand' => 'nullable|integer|min:0',
+            'stock_avalaible' => 'nullable|integer|min:0',
             'min_stock' => 'required|integer|min:0',
             'is_active' => 'required|boolean',
         ];
