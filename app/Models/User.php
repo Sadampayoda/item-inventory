@@ -21,7 +21,25 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'image',
+        'level'
     ];
+
+    public const LEVELS = [
+        'admin',
+        'warehouse',
+        'manajement_warehouse',
+    ];
+
+    // Optional: label biar rapi di view
+    public static function levelLabels()
+    {
+        return [
+            'admin' => 'Admin',
+            'warehouse' => 'Warehouse',
+            'manajement_warehouse' => 'Management Warehouse',
+        ];
+    }
 
     /**
      * The attributes that should be hidden for serialization.
