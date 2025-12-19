@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateWarehouseRequest;
+use App\Http\Requests\UpdateWarehouseRequest;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,10 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        //
+        $warehouses = Warehouse::latest()->get();
+        return view('warehouses.index', [
+            'warehouses' => $warehouses,
+        ]);
     }
 
     /**
@@ -20,15 +25,17 @@ class WarehouseController extends Controller
      */
     public function create()
     {
-        //
+        return view('warehouses.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateWarehouseRequest $request)
     {
-        //
+        Warehouse::create($request->validated());
+
+        return back()->with('success', 'Warehouse berhasil ditambahkan');
     }
 
     /**
@@ -44,15 +51,19 @@ class WarehouseController extends Controller
      */
     public function edit(Warehouse $warehouse)
     {
-        //
+        return view('warehouses.create',[
+            'warehouse' => $warehouse
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Warehouse $warehouse)
+    public function update(UpdateWarehouseRequest $request, Warehouse $warehouse)
     {
-        //
+        $warehouse->update($request->validated());
+
+        return back()->with('success', 'Warehouse berhasil diperbarui');
     }
 
     /**
@@ -60,6 +71,8 @@ class WarehouseController extends Controller
      */
     public function destroy(Warehouse $warehouse)
     {
-        //
+        $warehouse->delete();
+
+        return back()->with('success', 'Warehouse berhasil dihapus');
     }
 }
