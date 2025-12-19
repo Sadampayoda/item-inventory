@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('transaction_number')->unique();
             $table->date('transaction_date');
-            $table->string('warehouse');
+            $table->integer('warehouse_id');
             $table->string('status');
-            $table->date('expired_date');
+            $table->date('expired_date')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

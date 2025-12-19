@@ -5,11 +5,10 @@
         </a>
 
         <ul class="list-unstyled components mb-5">
-
-            <li><a href="#">Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
             <li><a href="{{ route('items.index') }}">Barang</a></li>
-            <li><a href="#">Masuk Stok (Inbound)</a></li>
-            <li><a href="#">Keluar Stok (Outbound)</a></li>
+            <li><a href="{{ route('inbounds.index') }}">Masuk Stok (Inbound)</a></li>
+            <li><a href="{{ route('outbounds.index') }}">Keluar Stok (Outbound)</a></li>
             <li><a href="{{ route('warehouses.index') }}">Warehouse</a></li>
             <li><a href="{{ route('users.index') }}">Users Manajement</a></li>
         </ul>

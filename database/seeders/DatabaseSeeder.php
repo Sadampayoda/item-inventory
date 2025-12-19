@@ -17,11 +17,17 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'test',
-            'email' => 'test123@demo.com',
-            'password' => bcrypt('123456'),
-            'level' => 'admin',
+        // User::factory()->create([
+        //     'name' => 'test',
+        //     'email' => 'test123@demo.com',
+        //     'password' => bcrypt('123456'),
+        //     'level' => 'admin',
+        // ]);
+
+
+        $this->call([
+            WarehouseSeeder::class,
+            ItemsSeeder::class,
         ]);
     }
 }
