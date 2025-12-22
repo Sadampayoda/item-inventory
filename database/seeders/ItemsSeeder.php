@@ -16,15 +16,30 @@ class ItemsSeeder extends Seeder
     {
         $warehouses = Warehouse::pluck('code')->toArray();
 
-        for ($i = 1; $i <= 10; $i++) {
+        $itemNames = [
+            'Beras Medium 5kg',
+            'Beras Premium 10kg',
+            'Gula Pasir 1kg',
+            'Minyak Goreng 2L',
+            'Tepung Terigu 1kg',
+            'Susu UHT 1L',
+            'Kopi Bubuk 250gr',
+            'Teh Celup 50pcs',
+            'Mie Instan Goreng',
+            'Garam Dapur 500gr',
+        ];
+
+        foreach ($itemNames as $index => $name) {
+            $stock = rand(20, 100);
+
             Item::create([
-                'code' => 'ITEM-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'name' => 'Item ' . $i,
-                'description' => 'Deskripsi item ' . $i,
+                'code' => 'ITEM-' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
+                'name' => $name,
+                'description' => 'Produk ' . $name,
                 'warehouse' => $warehouses[array_rand($warehouses)],
-                'stock_on_hand' => rand(10, 100),
-                'stock_avalaible' => rand(5, 80),
-                'min_stock' => rand(5, 10),
+                'stock_on_hand' => $stock,
+                'stock_avalaible' => $stock,
+                'min_stock' => rand(5, 15),
                 'is_active' => true,
             ]);
         }

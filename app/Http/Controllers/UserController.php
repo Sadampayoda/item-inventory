@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        if(!auth()->user()->level == 'admin') {
+            return redirect()->route('dashboard');
+        }
+    }
     /**
      * Display a listing of the resource.
      */

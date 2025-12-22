@@ -19,10 +19,15 @@ class InboundController extends Controller
      */
     public function index()
     {
-        $inbounds = Inbound::with('warehouseRef')->get();
+        $isWarehouse = auth()->check() && auth()->user()->level == 'warehouse';
+        $inbounds = Inbound::with('warehouseRef');
+
+        if(!$isWarehouse) {
+            $inbounds->whereIn('status',['need_approved','approved','expired']);
+        }
 
         return view('inbounds.index', [
-            'inbounds' => $inbounds,
+            'inbounds' => $inbounds->get(),
         ]);
     }
 
@@ -43,6 +48,10 @@ class InboundController extends Controller
      */
     public function store(CreateInboundRequest $request)
     {
+        if(auth()->check() && auth()->user()->level !== 'warehouse') {
+            return redirect()->route('dashboard');
+        }
+
         $inbound = Inbound::create([
             'transaction_number' => $this->generateTransactionNumber(
                 'IN',
@@ -64,7 +73,26 @@ class InboundController extends Controller
      */
     public function show(Inbound $inbound)
     {
-        //
+        $isWarehouse = auth()->check() && auth()->user()->level == 'warehouse';
+        if(!$isWarehouse && in_array($inbound->status, ['draft'])) {
+            return redirect()->route('dashboard');
+        }
+
+        $inbound->load('details', 'warehouseRef');
+
+        $warehouses = Warehouse::orderBy('name')->get();
+
+        $codeWarehouse = $warehouses->find($inbound->warehouse_id);
+
+        $items = Item::where('warehouse', $codeWarehouse->code)
+            ->where('is_active', true)
+            ->get();
+
+        return view('inbounds.edit', compact(
+            'inbound',
+            'warehouses',
+            'items'
+        ));
     }
 
     /**
@@ -72,6 +100,11 @@ class InboundController extends Controller
      */
     public function edit(Inbound $inbound)
     {
+        $isWarehouse = auth()->check() && auth()->user()->level == 'warehouse';
+        if(!$isWarehouse && in_array($inbound->status, ['draft'])) {
+            return redirect()->route('dashboard');
+        }
+
         $inbound->load('details', 'warehouseRef');
 
         $warehouses = Warehouse::orderBy('name')->get();
@@ -171,6 +204,30 @@ class InboundController extends Controller
      */
     public function destroy(Inbound $inbound)
     {
-        //
+        $isWarehouse = auth()->check() && auth()->user()->level == 'warehouse';
+        if(!$isWarehouse) {
+            return redirect()->route('dashboard');
+        }
+
+        if (in_array($inbound->status, ['approved', 'expired'])) {
+            return redirect()
+                ->route('inbounds.index')
+                ->with('errors', 'Inbound yang sudah approved / expired tidak dapat dihapus');
+        }
+
+        try {
+            DB::transaction(function () use ($inbound) {
+                $inbound->details()->delete();
+                $inbound->delete();
+            });
+
+            return redirect()
+                ->route('inbounds.index')
+                ->with('success', 'Inbound berhasil dihapus');
+        } catch (\Throwable $e) {
+            return redirect()
+                ->route('inbounds.index')
+                ->with('errors', $e->getMessage());
+        }
     }
 }

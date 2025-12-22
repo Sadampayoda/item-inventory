@@ -2,19 +2,18 @@
 
 @section('content')
     <div class="container-fluid">
-        <h4 class="mb-3">Edit Inbound</h4>
+        <h4 class="mb-3">Edit Outbound</h4>
 
         <x-alert key="success" action="success" />
         <x-alert key="errors" action="errors" />
 
         @php
-            $lockAll = in_array($inbound->status, ['need_approved', 'approved', 'expired']);
-            $lockTotal = in_array($inbound->status, ['approved', 'expired']);
-
+            $lockAll = in_array($outbound->status, ['need_approved', 'approved', 'expired']);
+            $lockTotal = in_array($outbound->status, ['approved', 'expired']);
             $userLevel = auth()->user()->level;
         @endphp
 
-        <form action="{{ route('inbounds.update', $inbound->id) }}" method="POST">
+        <form action="{{ route('outbounds.update', $outbound->id) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -22,32 +21,32 @@
             <div class="row mb-3">
                 <div class="col-md-3">
                     <label class="form-label">No Transaksi</label>
-                    <input type="text" class="form-control" value="{{ $inbound->transaction_number }}" readonly>
+                    <input type="text" class="form-control" value="{{ $outbound->transaction_number }}" readonly>
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label">Tanggal Transaksi</label>
                     <input type="date" name="transaction_date" class="form-control"
-                        value="{{ old('transaction_date', $inbound->transaction_date) }}" {{ $lockAll ? 'readonly' : '' }}>
+                        value="{{ old('transaction_date', $outbound->transaction_date) }}" {{ $lockAll ? 'readonly' : '' }}>
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label">Expired Date</label>
                     <input type="date" name="expired_date" class="form-control"
-                        value="{{ old('expired_date', $inbound->expired_date) }}" {{ $lockAll ? 'readonly' : '' }}>
+                        value="{{ old('expired_date', $outbound->expired_date) }}" {{ $lockAll ? 'readonly' : '' }}>
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-control" {{ $lockTotal ? 'disabled' : '' }}>
                         @if ($userLevel === 'warehouse')
-                            <option value="draft" {{ $inbound->status === 'draft' ? 'selected' : '' }}>Draft</option>
-                            <option value="need_approved" {{ $inbound->status === 'need_approved' ? 'selected' : '' }}>Need
+                            <option value="draft" {{ $outbound->status === 'draft' ? 'selected' : '' }}>Draft</option>
+                            <option value="need_approved" {{ $outbound->status === 'need_approved' ? 'selected' : '' }}>Need
                                 Approved</option>
                         @elseif ($userLevel === 'manajement_warehouse')
-                            <option value="approved" {{ $inbound->status === 'approved' ? 'selected' : '' }}>Approved
+                            <option value="approved" {{ $outbound->status === 'approved' ? 'selected' : '' }}>Approved
                             </option>
-                            <option value="expired" {{ $inbound->status === 'expired' ? 'selected' : '' }}>Expired</option>
+                            <option value="expired" {{ $outbound->status === 'expired' ? 'selected' : '' }}>Expired</option>
                         @endif
                     </select>
                 </div>
@@ -57,8 +56,8 @@
             <div class="mb-4">
                 <label class="form-label">Warehouse</label>
                 <input type="text" class="form-control"
-                    value="{{ $inbound->warehouseRef->name }} ({{ $inbound->warehouseRef->descrption }})" readonly>
-                <input type="hidden" name="warehouse" value="{{ $inbound->warehouse }}">
+                    value="{{ $outbound->warehouseRef->name }} ({{ $outbound->warehouseRef->descrption }})" readonly>
+                <input type="hidden" name="warehouse" value="{{ $outbound->warehouse }}">
             </div>
 
             {{-- DETAIL --}}
@@ -74,7 +73,7 @@
                         </tr>
                     </thead>
                     <tbody id="detailBody">
-                        @foreach ($inbound->details as $index => $detail)
+                        @foreach ($outbound->details as $index => $detail)
                             @php $item = $items->firstWhere('id', $detail->item_id); @endphp
                             <tr>
                                 <td>
@@ -106,7 +105,7 @@
             </div>
 
             {{-- ADD ITEM (DRAFT ONLY) --}}
-            @if ($inbound->status === 'draft')
+            @if ($outbound->status === 'draft')
                 <div class="row g-2 mb-4">
                     <div class="col-md-5">
                         <select id="itemSelect" class="form-control">
@@ -134,7 +133,7 @@
 
             {{-- ACTION --}}
             <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('inbounds.index') }}" class="btn btn-secondary">
+                <a href="{{ route('outbounds.index') }}" class="btn btn-secondary">
                     Kembali
                 </a>
 
@@ -148,9 +147,9 @@
     </div>
 
     {{-- SCRIPT (DRAFT ONLY) --}}
-    @if ($inbound->status === 'draft')
+    @if ($outbound->status === 'draft')
         <script>
-            let index = {{ $inbound->details->count() }};
+            let index = {{ $outbound->details->count() }};
 
             document.getElementById('addItem').addEventListener('click', function() {
                 const select = document.getElementById('itemSelect');
@@ -166,29 +165,29 @@
                 const opt = select.options[select.selectedIndex];
 
                 const row = `
-            <tr>
-                <td>
-                    ${opt.dataset.name}
-                    <input type="hidden"
-                        name="details[${index}][item_id]"
-                        value="${select.value}">
-                </td>
-                <td class="text-center">${opt.dataset.avl}</td>
-                <td class="text-center">${opt.dataset.oh}</td>
-                <td>
-                    <input type="number"
-                        name="details[${index}][quantity]"
-                        class="form-control form-control-sm"
-                        value="${qty}" min="1">
-                </td>
-                <td class="text-center">
-                    <button type="button"
-                        class="btn btn-sm btn-danger btn-remove">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
+                    <tr>
+                        <td>
+                            ${opt.dataset.name}
+                            <input type="hidden"
+                                name="details[${index}][item_id]"
+                                value="${select.value}">
+                        </td>
+                        <td class="text-center">${opt.dataset.avl}</td>
+                        <td class="text-center">${opt.dataset.oh}</td>
+                        <td>
+                            <input type="number"
+                                name="details[${index}][quantity]"
+                                class="form-control form-control-sm"
+                                value="${qty}" min="1">
+                        </td>
+                        <td class="text-center">
+                            <button type="button"
+                                class="btn btn-sm btn-danger btn-remove">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
 
                 document.getElementById('detailBody')
                     .insertAdjacentHTML('beforeend', row);

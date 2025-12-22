@@ -6,11 +6,20 @@
         </button>
 
         <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item active"><a class="nav-link" href="#">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Logout</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Admin</a></li>
+            <ul class="nav navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                </li>
+
+                
+
+                <li class="nav-item">
+                    <span class="nav-link">
+                        {{ auth()->user()->name }}
+                    </span>
+                </li>
             </ul>
+
         </div>
     </div>
 </nav>
